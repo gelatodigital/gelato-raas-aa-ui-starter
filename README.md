@@ -4,7 +4,7 @@ This project showcases a React implementation of how to use web3Auth with Safe a
 
 ## Web3 App
 
-Local app on localhost
+[https://raas-ui-starter.web.app/](https://raas-ui-starter.web.app/)
 
  <img src="docs/ui.png" width="500"/>
 
