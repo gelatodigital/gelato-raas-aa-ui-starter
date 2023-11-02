@@ -3,7 +3,7 @@ import { Status, State, TaskState, Message } from "../../types/Status";
 import { BiRefresh, BiCopy } from "react-icons/bi";
 import { interval, Subject, takeUntil } from "rxjs";
 import { Contract, Signer, ethers, providers, utils } from "ethers";
-
+import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
 import Header from "../Header";
 import "./style.css";
 import axios from "axios";
@@ -70,12 +70,12 @@ const App = () => {
     try {
       const web3auth = new Web3Auth({
         clientId:
-          "BFolnrXUpJ8W.....", // get it from Web3Auth Dashboard
+          "BFolnrXUpJ8WScbI0MHGllgsP4Jgyy9tuAyfd4rLJ0d07b1iGMhZw3Eu2E10HECY2KIqYczag4_Z4q7KsEojUWU", // get it from Web3Auth Dashboard
         web3AuthNetwork: "sapphire_devnet",
         chainConfig: {
           chainNamespace: "eip155",
-          chainId: "0x133e40", // hex of 1261120
-          rpcTarget: "https://rpc.zkatana.gelato.digital",
+          chainId: "0xA455",//133e40", // hex of 1261120
+          rpcTarget: "https://rpc.op-testnet.gelato.digital",//"https://rpc.zkatana.gelato.digital",
           // Avoid using public rpcTarget in production.
           // Use services like Infura, Quicknode etc
           displayName: "zKatana Testnet",
@@ -84,16 +84,37 @@ const App = () => {
           tickerName: "ETH",
         },
       });
-      await web3auth!.initModal();
+      await web3auth!.initModal({
+        modalConfig: {
+          // Disable Wallet Connect V2
+          [WALLET_ADAPTERS.WALLET_CONNECT_V2]: {
+            label: "wallet_connect",
+            showOnModal: false,
+          },
+          // Disable Metamask
+          [WALLET_ADAPTERS.METAMASK]: {
+            label: "metamask",
+            showOnModal: false,
+          },
+           // Disable Metamask
+           [WALLET_ADAPTERS.TORUS_EVM]: {
+            label: "torus",
+            showOnModal: false,
+          },
+        },
+      });
 
    
       const web3authProvider = await web3auth!.connect();
+
+
 
       const provider = new ethers.providers.Web3Provider(web3authProvider!);
       setWeb3auth(web3auth);
       refresh(provider);
       const user = await web3auth!.getUserInfo();
-      console.log(user);
+      console.log(user)
+
       return;
     } catch (error) {}
   };
@@ -154,8 +175,20 @@ const App = () => {
         gasLimit: txConfig.gasLimit,
         isSponsored: true,
       };
+      let web3AuthSigner  = signer;
+      try {
+        const privateKey = "0x" + await web3auth!.provider!.request({
+          method: "eth_private_key"
+        }) as string;
+        web3AuthSigner  = new ethers.Wallet(privateKey!, provider!);
+      } catch (error) {
+        
+      }
       const relayPack = new GelatoRelayPack(GELATO_RELAY_API_KEY);
-      const safeAccountAbstraction = new AccountAbstraction(signer!);
+
+
+
+      const safeAccountAbstraction = new AccountAbstraction(web3AuthSigner !);
       const sdkConfig: AccountAbstractionConfig = {
         relayPack,
       };
