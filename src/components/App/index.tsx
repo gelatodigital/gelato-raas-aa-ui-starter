@@ -74,8 +74,8 @@ const App = () => {
         web3AuthNetwork: "sapphire_devnet",
         chainConfig: {
           chainNamespace: "eip155",
-          chainId: "0xA455",//133e40", // hex of 1261120
-          rpcTarget: "https://rpc.op-testnet.gelato.digital",//"https://rpc.zkatana.gelato.digital",
+          chainId: "0x133e40", // hex of 1261120
+          rpcTarget: "https://rpc.zkatana.gelato.digital",
           // Avoid using public rpcTarget in production.
           // Use services like Infura, Quicknode etc
           displayName: "zKatana Testnet",
@@ -412,10 +412,13 @@ const App = () => {
             <main>
               <div className="flex">
                 <p className="title">AA on zKatana</p>
+                {signerAddress != undefined ? (
                 <div className="isDeployed">
                   <p>User:</p>
                   <p className="highlight">
-                    {signerAddress}
+                  <a  href={`https://zkatana.blockscout.com/address/${signerAddress}`} target="_blank"
+                        rel="noopener noreferrer">
+                    {signerAddress.substring(0,6)+ '...' +signerAddress.substring(signerAddress.length-6,signerAddress.length)}
                     <span
                       style={{ position: "relative", top: "5px", left: "5px" }}
                     >
@@ -426,13 +429,16 @@ const App = () => {
                         onClick={() => onCopy(signerAddress!)}
                       />
                     </span>
+                    </a>
                   </p>
 
                   {safe != undefined ? (
                     <div style={{ width: "350px", margin: "25px auto 10px" }}>
                       <p style={{ fontWeight: "600" }}>Your Safe</p>
                       <p className="highlight">
-                        {safe}
+                        <a href={`https://zkatana.blockscout.com/address/${safe}`} target="_blank"
+                        rel="noopener noreferrer">
+                        {safe.substring(0,6)+ '...' +safe.substring(safe.length-6,safe.length)}
                         <span
                           style={{
                             position: "relative",
@@ -447,6 +453,7 @@ const App = () => {
                             onClick={() => onCopy(safe!)}
                           />
                         </span>
+                        </a>
                       </p>
                     </div>
                   ) : (
@@ -479,6 +486,26 @@ const App = () => {
                           </span>
                         </span>
                       </p>
+                      <p className="highlight">
+                        <a href={`https://zkatana.blockscout.com/address/0x47A9064a8D242860ABb43FC8340B3680487CC088?tab=read_contract`} target="_blank"
+                        rel="noopener noreferrer">
+                        0x47A9....7CC088
+                        <span
+                          style={{
+                            position: "relative",
+                            top: "5px",
+                            left: "5px",
+                          }}
+                        >
+                          <BiCopy
+                            cursor={"pointer"}
+                            color="white"
+                            fontSize={"20px"}
+                            onClick={() => onCopy("0x47A9064a8D242860ABb43FC8340B3680487CC088")}
+                          />
+                        </span>
+                        </a>
+                      </p>
                       <Button ready={ready} onClick={() => onAction(0)}>
                         {" "}
                        Increment
@@ -486,6 +513,9 @@ const App = () => {
                     </div>
                   )}
                 </div>
+                ):(
+                  <div></div>
+                )}
               </div>
             </main>
           </div>
